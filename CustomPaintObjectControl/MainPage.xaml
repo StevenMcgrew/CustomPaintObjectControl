@@ -8,10 +8,25 @@
     x:Class="CustomPaintObjectControl.MainPage"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="White" BorderBrush="Transparent" BorderThickness="2">
+
+        <!--<Rectangle Name="rectTitleBar" Height="29" VerticalAlignment="Top" Fill="#B2007ACC"/>-->
+        <!--<StackPanel Orientation="Horizontal" Background="#B2007ACC" Height="18" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,26.34,0">
+            <TextBlock Text="Opacity" VerticalAlignment="Center" Foreground="White" Margin="0,0,5,0" FontSize="16"/>
+            <Slider Name="sliderOpacity" Width="100" VerticalAlignment="Top" Minimum="25" Value="100" Foreground="White" Height="32" Margin="0,-10,0,0" />
+        </StackPanel>
+        
+        <Button Name="btnClose" HorizontalAlignment="Right" VerticalAlignment="Top" ToolTipService.ToolTip="Close" FontSize="6" Background="#B2007ACC" Foreground="White" FontWeight="Bold" Height="18" Width="26.34">
+            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8BB;"/>
+        </Button>-->
 
         <Controls:PaintObjectTemplatedControl>
-            <TextBlock Text="sofjosjifosj"/>
+            <StackPanel>
+                <Rectangle Width="500" Height="100" Fill="Red"/>
+                <Rectangle Width="500" Height="100" Fill="DodgerBlue"/>
+                <Rectangle Width="500" Height="100" Fill="Green"/>
+                <Rectangle Width="500" Height="100" Fill="Yellow"/>
+            </StackPanel>
         </Controls:PaintObjectTemplatedControl>
 
     </Grid>
