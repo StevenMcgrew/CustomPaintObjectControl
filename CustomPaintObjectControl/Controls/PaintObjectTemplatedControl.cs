@@ -23,7 +23,7 @@ namespace CustomPaintObjectControl.Controls
             this.DefaultStyleKey = typeof(PaintObjectTemplatedControl);
         }
 
-        CompositeTransform transform_myWindow;
+        CompositeTransform transform_myControl;
         Button _closeButton;
         Grid _myWindow;
         StackPanel _spanelOpacity;
@@ -54,6 +54,7 @@ namespace CustomPaintObjectControl.Controls
             _rectBottom = GeneralizedGetTemplateChild<Rectangle>("Bottom");
             _rectBottomRight = GeneralizedGetTemplateChild<Rectangle>("BottomRight");
 
+            this.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _contentPresenter.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _myWindow.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _rectRight.ManipulationMode = ManipulationModes.TranslateX;
@@ -103,8 +104,8 @@ namespace CustomPaintObjectControl.Controls
             _rectBottomRight.PointerEntered += _PointerEntered;
             _rectBottomRight.PointerExited += _PointerExited;
 
-            transform_myWindow = new CompositeTransform();
-            _myWindow.RenderTransform = transform_myWindow;
+            transform_myControl = new CompositeTransform();
+            this.RenderTransform = transform_myControl;
         }
 
         #region Loaded event
@@ -181,7 +182,7 @@ namespace CustomPaintObjectControl.Controls
             _myWindow.BorderBrush = GetColorFromHex("#B2007ACC");
             _closeButton.Visibility = Visibility.Visible;
 
-            if (this.Content.Equals(typeof(Image)))
+            if (this.Content.GetType() == (typeof(Image)))
             {
                 _spanelOpacity.Visibility = Visibility.Visible;
             }
@@ -230,7 +231,7 @@ namespace CustomPaintObjectControl.Controls
         private void _contentPresenter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             // Get the top left point
-            GeneralTransform gt = _myWindow.TransformToVisual((Panel)this.Parent);
+            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
             Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
 
             // Set these variables to represent the edges
@@ -248,42 +249,42 @@ namespace CustomPaintObjectControl.Controls
             // Allow movement if within boundary (Use two separate "if" statements here, so the movement isn't sticky at the boundary)
             if ((leftAdjust >= 0) && (rightAdjust <= ((Panel)this.Parent).ActualWidth))
             {
-                transform_myWindow.TranslateX += e.Delta.Translation.X;
+                transform_myControl.TranslateX += e.Delta.Translation.X;
             }
 
             if ((topAdjust >= 0) && (bottomAdjust <= ((Panel)this.Parent).ActualHeight))
             {
-                transform_myWindow.TranslateY += e.Delta.Translation.Y;
+                transform_myControl.TranslateY += e.Delta.Translation.Y;
             }
         }
 
         private void _rectBottomRight_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             // Get top left point
-            GeneralTransform gt = _myWindow.TransformToVisual((Panel)this.Parent);
+            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
             Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
 
             // Set these to represent the edges
-            double right = TopLeftPoint.X + _myWindow.ActualWidth;
-            double bottom = TopLeftPoint.Y + _myWindow.ActualHeight;
+            double right = TopLeftPoint.X + this.ActualWidth;
+            double bottom = TopLeftPoint.Y + this.ActualHeight;
 
             // Combine the adjustable edges with the movement value.
             double rightAdjust = right + e.Delta.Translation.X;
             double bottomAdjust = bottom + e.Delta.Translation.Y;
 
             // Set these to use for restricting the minimum size
-            double yadjust = _myWindow.ActualHeight + e.Delta.Translation.Y;
-            double xadjust = _myWindow.ActualWidth + e.Delta.Translation.X;
+            double yadjust = this.ActualHeight + e.Delta.Translation.Y;
+            double xadjust = this.ActualWidth + e.Delta.Translation.X;
 
             // Allow adjustment within restrictions
             if ((rightAdjust <= ((Panel)this.Parent).ActualWidth) && (xadjust >= 100))
             {
-                _myWindow.Width = xadjust;
+                this.Width = xadjust;
             }
 
             if ((bottomAdjust <= ((Panel)this.Parent).ActualHeight) && (yadjust >= 100))
             {
-                _myWindow.Height = yadjust;
+                this.Height = yadjust;
             }
         }
 
@@ -330,7 +331,7 @@ namespace CustomPaintObjectControl.Controls
             // Allow adjustment within restrictions
             if ((leftAdjust >= 0) && (xadjust >= 100))
             {
-                transform_myWindow.TranslateX += e.Delta.Translation.X;
+                transform_myControl.TranslateX += e.Delta.Translation.X;
                 _myWindow.Width = xadjust;
             }
 
@@ -358,7 +359,7 @@ namespace CustomPaintObjectControl.Controls
             // Allow adjustment within restrictions
             if ((leftAdjust >= 0) && (xadjust >= 100))
             {
-                transform_myWindow.TranslateX += e.Delta.Translation.X;
+                transform_myControl.TranslateX += e.Delta.Translation.X;
                 _myWindow.Width = _myWindow.ActualWidth - e.Delta.Translation.X;
             }
         }
@@ -389,7 +390,7 @@ namespace CustomPaintObjectControl.Controls
 
             if ((topAdjust >= 0) && (yadjust >= 100))
             {
-                transform_myWindow.TranslateY += e.Delta.Translation.Y;
+                transform_myControl.TranslateY += e.Delta.Translation.Y;
                 _myWindow.Height = yadjust;
             }
         }
@@ -412,7 +413,7 @@ namespace CustomPaintObjectControl.Controls
             // Allow adjustment within restrictions
             if ((topAdjust >= 0) && (yadjust >= 100))
             {
-                transform_myWindow.TranslateY += e.Delta.Translation.Y;
+                transform_myControl.TranslateY += e.Delta.Translation.Y;
                 _myWindow.Height = _myWindow.ActualHeight - e.Delta.Translation.Y;
             }
         }
@@ -438,13 +439,13 @@ namespace CustomPaintObjectControl.Controls
             // Allow adjustment within restrictions
             if ((leftAdjust >= 0) && (xadjust >= 100))
             {
-                transform_myWindow.TranslateX += e.Delta.Translation.X;
+                transform_myControl.TranslateX += e.Delta.Translation.X;
                 _myWindow.Width = xadjust;
             }
 
             if ((topAdjust >= 0) && (yadjust >= 100))
             {
-                transform_myWindow.TranslateY += e.Delta.Translation.Y;
+                transform_myControl.TranslateY += e.Delta.Translation.Y;
                 _myWindow.Height = yadjust;
             }
         }
