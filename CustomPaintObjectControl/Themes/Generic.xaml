@@ -313,7 +313,7 @@
 
                         <ContentPresenter x:Name="ContentPresenter">
                             <FlyoutBase.AttachedFlyout>
-                                <MenuFlyout>
+                                <MenuFlyout x:Name="flyoutZOrder">
                                     <MenuFlyoutItem Name="menuBringToFront" Text="Bring to Front"/>
                                     <MenuFlyoutItem Name="menuSendToBack" Text="Send to Back"/>
                                 </MenuFlyout>
@@ -350,6 +350,8 @@
                             <TextBlock Text="Opacity" VerticalAlignment="Center" Foreground="White" Margin="5,0,5,3" FontSize="11" HorizontalAlignment="Center" Padding="0,0,0,1"/>
                             <Slider Name="sliderOpacity" Width="100" Minimum="25" Value="100" Style="{StaticResource styleSliderForOpacity}" Height="18" Margin="0,0,5,0" Padding="0,0,0,2"/>
                         </StackPanel>
+
+                        <Rectangle Name="rectForFlyoutPosition" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
                     </Grid>
 

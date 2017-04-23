@@ -23,10 +23,12 @@ namespace CustomPaintObjectControl.Controls
         }
 
         CompositeTransform transform_myControl;
+        CompositeTransform transform_rectForFlyout;
         Button _closeButton;
         Grid _myWindow;
         StackPanel _spanelOpacity;
         ContentPresenter _contentPresenter;
+        Rectangle _rectForFlyoutPosition;
         Rectangle _rectRight;
         Rectangle _rectTopLeft;
         Rectangle _rectTop;
@@ -74,6 +76,7 @@ namespace CustomPaintObjectControl.Controls
             _rectBottomLeft = GeneralizedGetTemplateChild<Rectangle>("BottomLeft");
             _rectBottom = GeneralizedGetTemplateChild<Rectangle>("Bottom");
             _rectBottomRight = GeneralizedGetTemplateChild<Rectangle>("BottomRight");
+            _rectForFlyoutPosition = GeneralizedGetTemplateChild<Rectangle>("rectForFlyoutPosition");
 
             this.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _contentPresenter.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
@@ -86,6 +89,7 @@ namespace CustomPaintObjectControl.Controls
             _rectBottomLeft.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _rectBottom.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _rectBottomRight.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
+            _rectForFlyoutPosition.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
 
             this.Loaded += TemplatedWindowControl_Loaded;
 
@@ -144,6 +148,9 @@ namespace CustomPaintObjectControl.Controls
 
             transform_myControl = new CompositeTransform();
             this.RenderTransform = transform_myControl;
+
+            transform_rectForFlyout = new CompositeTransform();
+            _rectForFlyoutPosition.RenderTransform = transform_rectForFlyout;
         }
 
         private void TemplatedWindowControl_Loaded(object sender, RoutedEventArgs e)
@@ -203,12 +210,26 @@ namespace CustomPaintObjectControl.Controls
 
         private void _contentPresenter_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+            Point pointerPosition = e.GetPosition(this);
+            transform_rectForFlyout.TranslateX = pointerPosition.X;
+            transform_rectForFlyout.TranslateY = pointerPosition.Y;
+
+            FlyoutBase flyout = FlyoutBase.GetAttachedFlyout(_contentPresenter);
+            flyout.Placement = FlyoutPlacementMode.Right;
+            flyout.ShowAt(_rectForFlyoutPosition);
+
+            //FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
 
         private void _rect_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            FlyoutBase.ShowAttachedFlyout(_contentPresenter);
+            Point position = e.GetPosition(this);
+            transform_rectForFlyout.TranslateX = position.X;
+            transform_rectForFlyout.TranslateY = position.Y;
+
+            FlyoutBase flyout = FlyoutBase.GetAttachedFlyout(_contentPresenter);
+            flyout.Placement = FlyoutPlacementMode.Right;
+            flyout.ShowAt(_rectForFlyoutPosition);
         }
 
         private void _menuBringToFront_Click(object sender, RoutedEventArgs e)
