@@ -52,10 +52,28 @@ namespace CustomPaintObjectControl
 
         private void btnTextBox_Click(object sender, RoutedEventArgs e)
         {
-            TextBox textbox = new TextBox();
+            TextBox textBox = new TextBox();
+            textBox.Style = Resources["styleTextBox"] as Style;
+            textBox.Foreground = new SolidColorBrush(Colors.Red);
+            textBox.Background = new SolidColorBrush(Colors.LightBlue);
+            textBox.BorderBrush = textBox.Foreground;
 
             PaintObjectTemplatedControl paintObject = new PaintObjectTemplatedControl();
-            paintObject.Content = textbox;
+            paintObject.Content = textBox;
+
+            gridForWindows.Children.Add(paintObject);
+        }
+
+        private void btnTransparentTextBox_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = new TextBox();
+            textBox.Style = Resources["styleTextBox"] as Style;
+            textBox.Foreground = new SolidColorBrush(Colors.Purple);
+            textBox.Background = new SolidColorBrush(Colors.Transparent);
+            textBox.BorderBrush = new SolidColorBrush(Colors.Transparent);
+
+            PaintObjectTemplatedControl paintObject = new PaintObjectTemplatedControl();
+            paintObject.Content = textBox;
 
             gridForWindows.Children.Add(paintObject);
         }

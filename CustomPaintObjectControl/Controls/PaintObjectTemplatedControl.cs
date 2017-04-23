@@ -39,7 +39,11 @@ namespace CustomPaintObjectControl.Controls
         MenuFlyoutItem _menuBringToFront;
         MenuFlyoutItem _menuSendToBack;
 
-        #region Dependency Property
+        bool ContentIsTextbox = false;
+        int minHeight = 40;
+        int minWidth = 40;
+
+#region Dependency Property
 
         public bool OpacitySliderIsVisible
         {
@@ -51,7 +55,7 @@ namespace CustomPaintObjectControl.Controls
         public static readonly DependencyProperty OpacitySliderIsVisibleProperty =
             DependencyProperty.Register("OpacitySliderIsVisible", typeof(bool), typeof(PaintObjectTemplatedControl), new PropertyMetadata(false));
 
-        #endregion
+#endregion
 
         protected override void OnApplyTemplate()
         {
@@ -74,13 +78,13 @@ namespace CustomPaintObjectControl.Controls
             this.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _contentPresenter.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _myWindow.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
-            _rectRight.ManipulationMode = ManipulationModes.TranslateX;
+            _rectRight.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _rectTopLeft.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
-            _rectTop.ManipulationMode = ManipulationModes.TranslateY;
+            _rectTop.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _rectTopRight.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
-            _rectLeft.ManipulationMode = ManipulationModes.TranslateX;
+            _rectLeft.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _rectBottomLeft.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
-            _rectBottom.ManipulationMode = ManipulationModes.TranslateY;
+            _rectBottom.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             _rectBottomRight.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
 
             this.Loaded += TemplatedWindowControl_Loaded;
@@ -101,90 +105,45 @@ namespace CustomPaintObjectControl.Controls
             _rectRight.ManipulationDelta += _rectRight_ManipulationDelta;
             _rectRight.PointerEntered += _PointerEntered;
             _rectRight.PointerExited += _PointerExited;
+            _rectRight.RightTapped += _rect_RightTapped;
 
             _rectTopLeft.ManipulationDelta += _rectTopLeft_ManipulationDelta;
             _rectTopLeft.PointerEntered += _PointerEntered;
             _rectTopLeft.PointerExited += _PointerExited;
+            _rectTopLeft.RightTapped += _rect_RightTapped;
 
             _rectTop.ManipulationDelta += _rectTop_ManipulationDelta;
             _rectTop.PointerEntered += _PointerEntered;
             _rectTop.PointerExited += _PointerExited;
+            _rectTop.RightTapped += _rect_RightTapped;
 
             _rectTopRight.ManipulationDelta += _rectTopRight_ManipulationDelta;
             _rectTopRight.PointerEntered += _PointerEntered;
             _rectTopRight.PointerExited += _PointerExited;
+            _rectTopRight.RightTapped += _rect_RightTapped;
 
             _rectLeft.ManipulationDelta += _rectLeft_ManipulationDelta;
             _rectLeft.PointerEntered += _PointerEntered;
             _rectLeft.PointerExited += _PointerExited;
+            _rectLeft.RightTapped += _rect_RightTapped;
 
             _rectBottomLeft.ManipulationDelta += _rectBottomLeft_ManipulationDelta;
             _rectBottomLeft.PointerEntered += _PointerEntered;
             _rectBottomLeft.PointerExited += _PointerExited;
+            _rectBottomLeft.RightTapped += _rect_RightTapped;
 
             _rectBottom.ManipulationDelta += _rectBottom_ManipulationDelta;
             _rectBottom.PointerEntered += _PointerEntered;
             _rectBottom.PointerExited += _PointerExited;
+            _rectBottom.RightTapped += _rect_RightTapped;
 
             _rectBottomRight.ManipulationDelta += _rectBottomRight_ManipulationDelta;
             _rectBottomRight.PointerEntered += _PointerEntered;
             _rectBottomRight.PointerExited += _PointerExited;
+            _rectBottomRight.RightTapped += _rect_RightTapped;
 
             transform_myControl = new CompositeTransform();
             this.RenderTransform = transform_myControl;
-        }
-
-        private void _menuSendToBack_Click(object sender, RoutedEventArgs e)
-        {
-            Panel parent = ((Panel)this.Parent);
-            UIElement myElement = this;
-            int myZ = Canvas.GetZIndex(myElement);
-            int ZWeAreChecking = 0;
-            int minZ = 0;
-
-            for (int i = 0; i < parent.Children.Count; i++)
-            {
-                UIElement childWeAreChecking = parent.Children[i] as UIElement;
-                ZWeAreChecking = Canvas.GetZIndex(childWeAreChecking);
-                if (minZ > ZWeAreChecking)
-                {
-                    minZ = ZWeAreChecking;
-                }
-            }
-
-            if (myZ > minZ)
-            {
-                Canvas.SetZIndex(myElement, minZ - 1);
-            }
-        }
-
-        private void _menuBringToFront_Click(object sender, RoutedEventArgs e)
-        {
-            Panel parent = ((Panel)this.Parent);
-            FrameworkElement myElement = this;
-            int myZ = Canvas.GetZIndex(myElement);
-            int ZWeAreChecking = 0;
-            int maxZ = 0;
-
-            for (int i = 0; i < parent.Children.Count; i++)
-            {
-                FrameworkElement childWeAreChecking = parent.Children[i] as FrameworkElement;
-                ZWeAreChecking = Canvas.GetZIndex(childWeAreChecking);
-                if (maxZ < ZWeAreChecking)
-                {
-                    maxZ = ZWeAreChecking;
-                }
-            }
-
-            if (myZ < maxZ)
-            {
-                Canvas.SetZIndex(myElement, maxZ + 1);
-            }
-        }
-
-        private void _contentPresenter_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
 
         private void TemplatedWindowControl_Loaded(object sender, RoutedEventArgs e)
@@ -226,6 +185,15 @@ namespace CustomPaintObjectControl.Controls
             binding.Mode = BindingMode.TwoWay;
             binding.Converter = new Converters.OpacityBindingConverter();
             _contentPresenter.SetBinding(OpacityProperty, binding);
+
+            // Check if content is TextBox
+            if (this.Content != null)
+            {
+                if (this.Content.GetType() == typeof(TextBox))
+                {
+                    ContentIsTextbox = true;
+                }
+            }
         }
 
         private void _closeButton_Click(object sender, RoutedEventArgs e)
@@ -233,7 +201,65 @@ namespace CustomPaintObjectControl.Controls
             ((Panel)this.Parent).Children.Remove(this);
         }
 
-        #region Pointer Enter/Exit events
+        private void _contentPresenter_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+        }
+
+        private void _rect_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout(_contentPresenter);
+        }
+
+        private void _menuBringToFront_Click(object sender, RoutedEventArgs e)
+        {
+            Panel parent = ((Panel)this.Parent);
+            FrameworkElement myElement = this;
+            int myZ = Canvas.GetZIndex(myElement);
+            int ZWeAreChecking = 0;
+            int maxZ = 0;
+
+            for (int i = 0; i < parent.Children.Count; i++)
+            {
+                FrameworkElement childWeAreChecking = parent.Children[i] as FrameworkElement;
+                ZWeAreChecking = Canvas.GetZIndex(childWeAreChecking);
+                if (maxZ < ZWeAreChecking)
+                {
+                    maxZ = ZWeAreChecking;
+                }
+            }
+
+            if (myZ < maxZ)
+            {
+                Canvas.SetZIndex(myElement, maxZ + 1);
+            }
+        }
+
+        private void _menuSendToBack_Click(object sender, RoutedEventArgs e)
+        {
+            Panel parent = ((Panel)this.Parent);
+            UIElement myElement = this;
+            int myZ = Canvas.GetZIndex(myElement);
+            int ZWeAreChecking = 0;
+            int minZ = 0;
+
+            for (int i = 0; i < parent.Children.Count; i++)
+            {
+                UIElement childWeAreChecking = parent.Children[i] as UIElement;
+                ZWeAreChecking = Canvas.GetZIndex(childWeAreChecking);
+                if (minZ > ZWeAreChecking)
+                {
+                    minZ = ZWeAreChecking;
+                }
+            }
+
+            if (myZ > minZ)
+            {
+                Canvas.SetZIndex(myElement, minZ - 1);
+            }
+        }
+
+#region Pointer Enter/Exit events
 
         private void _myWindow_PointerExited(object sender, PointerRoutedEventArgs e)
         {
@@ -259,34 +285,41 @@ namespace CustomPaintObjectControl.Controls
 
         private void _PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            string name = (sender as Rectangle).Name;
-
-            switch (name)
+            if (ContentIsTextbox == true)
             {
-                case "BottomRight":
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNorthwestSoutheast, 1);
-                    break;
-                case "Right":
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeWestEast, 1);
-                    break;
-                case "Bottom":
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNorthSouth, 1);
-                    break;
-                case "Top":
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNorthSouth, 1);
-                    break;
-                case "Left":
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeWestEast, 1);
-                    break;
-                case "TopLeft":
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNorthwestSoutheast, 1);
-                    break;
-                case "TopRight":
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNortheastSouthwest, 1);
-                    break;
-                case "BottomLeft":
-                    Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNortheastSouthwest, 1);
-                    break;
+                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeAll, 1);
+            }
+            else
+            {
+                string name = (sender as Rectangle).Name;
+
+                switch (name)
+                {
+                    case "BottomRight":
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNorthwestSoutheast, 1);
+                        break;
+                    case "Right":
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeWestEast, 1);
+                        break;
+                    case "Bottom":
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNorthSouth, 1);
+                        break;
+                    case "Top":
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNorthSouth, 1);
+                        break;
+                    case "Left":
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeWestEast, 1);
+                        break;
+                    case "TopLeft":
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNorthwestSoutheast, 1);
+                        break;
+                    case "TopRight":
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNortheastSouthwest, 1);
+                        break;
+                    case "BottomLeft":
+                        Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeNortheastSouthwest, 1);
+                        break;
+                }
             }
         }
 
@@ -302,14 +335,295 @@ namespace CustomPaintObjectControl.Controls
 
         private void _contentPresenter_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeAll, 1);
+            if (ContentIsTextbox == false)
+            {
+                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.SizeAll, 1);
+            }
         }
 
-        #endregion
+#endregion
 
-        #region ManipulationDelta handlers
+#region ManipulationDelta handlers
 
         private void _contentPresenter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == false)
+            {
+                MoveAndRestrain(e);
+            }
+        }
+
+        private void _rectBottomRight_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == true)
+            {
+                MoveAndRestrain(e);
+            }
+            else
+            {
+                // Get top left point
+                GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
+                Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
+
+                // Set these to represent the edges
+                double right = TopLeftPoint.X + this.ActualWidth;
+                double bottom = TopLeftPoint.Y + this.ActualHeight;
+
+                // Combine the adjustable edges with the movement value.
+                double rightAdjust = right + e.Delta.Translation.X;
+                double bottomAdjust = bottom + e.Delta.Translation.Y;
+
+                // Set these to use for restricting the minimum size
+                double yadjust = this.ActualHeight + e.Delta.Translation.Y;
+                double xadjust = this.ActualWidth + e.Delta.Translation.X;
+
+                // Allow adjustment within restrictions
+                if ((rightAdjust <= ((Panel)this.Parent).ActualWidth) && (xadjust >= minWidth))
+                {
+                    this.Width = xadjust;
+                }
+
+                if ((bottomAdjust <= ((Panel)this.Parent).ActualHeight) && (yadjust >= minHeight))
+                {
+                    this.Height = yadjust;
+                }
+            }
+        }
+
+        private void _rectBottom_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == true)
+            {
+                MoveAndRestrain(e);
+            }
+            else
+            {
+                //Get top left point
+                GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
+                Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
+
+                // Set this to represent the bottom edge
+                double bottom = TopLeftPoint.Y + this.ActualHeight;
+
+                // Combine the bottom edge with the movement value
+                double bottomAdjust = bottom + e.Delta.Translation.Y;
+
+                // Set this to use for restricting the minimum size
+                double yadjust = this.ActualHeight + e.Delta.Translation.Y;
+
+                // Allow adjustment within restrictions
+                if ((bottomAdjust <= ((Panel)this.Parent).ActualHeight) && (yadjust >= minHeight))
+                {
+                    this.Height = yadjust;
+                }
+            }
+        }
+
+        private void _rectBottomLeft_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == true)
+            {
+                MoveAndRestrain(e);
+            }
+            else
+            {
+                // Get top left point
+                GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
+                Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
+
+                // Set these to represent the edges
+                double left = TopLeftPoint.X;
+                double bottom = TopLeftPoint.Y + this.ActualHeight;
+
+                // Combine the adjustable edges with the movement value
+                double leftAdjust = left + e.Delta.Translation.X;
+                double bottomAdjust = bottom + e.Delta.Translation.Y;
+
+                // Set these to use for restricting the minimum size
+                double yadjust = this.ActualHeight + e.Delta.Translation.Y;
+                double xadjust = this.ActualWidth - e.Delta.Translation.X;
+
+                // Allow adjustment within restrictions
+                if ((leftAdjust >= 0) && (xadjust >= minWidth))
+                {
+                    transform_myControl.TranslateX += e.Delta.Translation.X;
+                    this.Width = xadjust;
+                }
+
+                if ((bottomAdjust <= ((Panel)this.Parent).ActualHeight) && (yadjust >= minHeight))
+                {
+                    this.Height = yadjust;
+                }
+            }
+        }
+
+        private void _rectLeft_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == true)
+            {
+                MoveAndRestrain(e);
+            }
+            else
+            {
+                //Get top left point
+                GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
+                Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
+
+                // Set this to represent the left edge
+                double left = TopLeftPoint.X;
+
+                // Combine the left edge with the movement value
+                double leftAdjust = left + e.Delta.Translation.X;
+
+                // Set this variable to use for restricting the minimum size
+                double xadjust = this.ActualWidth - e.Delta.Translation.X;
+
+                // Allow adjustment within restrictions
+                if ((leftAdjust >= 0) && (xadjust >= minWidth))
+                {
+                    transform_myControl.TranslateX += e.Delta.Translation.X;
+                    this.Width = this.ActualWidth - e.Delta.Translation.X;
+                }
+            }
+        }
+
+        private void _rectTopRight_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == true)
+            {
+                MoveAndRestrain(e);
+            }
+            else
+            {
+                // Get top left point
+                GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
+                Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
+
+                // Set these variables to represent the edges
+                double right = TopLeftPoint.X + this.ActualWidth;
+                double top = TopLeftPoint.Y;
+
+                // Combine the adjustable edges with the movement value
+                double rightAdjust = right + e.Delta.Translation.X;
+                double topAdjust = top + e.Delta.Translation.Y;
+
+                // Set these to use for restricting the minimum size
+                double yadjust = this.ActualHeight - e.Delta.Translation.Y;
+                double xadjust = this.ActualWidth + e.Delta.Translation.X;
+
+                // Allow adjustment within restrictions
+                if ((rightAdjust <= ((Panel)this.Parent).ActualWidth) && (xadjust >= minWidth))
+                {
+                    this.Width = xadjust;
+                }
+
+                if ((topAdjust >= 0) && (yadjust >= minHeight))
+                {
+                    transform_myControl.TranslateY += e.Delta.Translation.Y;
+                    this.Height = yadjust;
+                }
+            }
+        }
+
+        private void _rectTop_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == true)
+            {
+                MoveAndRestrain(e);
+            }
+            else
+            {
+                //Get top left point
+                GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
+                Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
+
+                // Set this to represent the top edge
+                double top = TopLeftPoint.Y;
+
+                // Combine the top edge with the movement value
+                double topAdjust = top + e.Delta.Translation.Y;
+
+                // Set this variable to use for restricting the minimum size
+                double yadjust = this.ActualHeight - e.Delta.Translation.Y;
+
+                // Allow adjustment within restrictions
+                if ((topAdjust >= 0) && (yadjust >= minHeight))
+                {
+                    transform_myControl.TranslateY += e.Delta.Translation.Y;
+                    this.Height = this.ActualHeight - e.Delta.Translation.Y;
+                }
+            }
+        }
+
+        private void _rectTopLeft_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == true)
+            {
+                MoveAndRestrain(e);
+            }
+            else
+            {
+                // Get top left point
+                GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
+                Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
+
+                // Set these to represent the edges
+                double left = TopLeftPoint.X;
+                double top = TopLeftPoint.Y;
+
+                // Combine the adjustable edges with the movement value
+                double leftAdjust = left + e.Delta.Translation.X;
+                double topAdjust = top + e.Delta.Translation.Y;
+
+                // Set these to use for restricting the minimum size
+                double yadjust = this.ActualHeight - e.Delta.Translation.Y;
+                double xadjust = this.ActualWidth - e.Delta.Translation.X;
+
+                // Allow adjustment within restrictions
+                if ((leftAdjust >= 0) && (xadjust >= minWidth))
+                {
+                    transform_myControl.TranslateX += e.Delta.Translation.X;
+                    this.Width = xadjust;
+                }
+
+                if ((topAdjust >= 0) && (yadjust >= minHeight))
+                {
+                    transform_myControl.TranslateY += e.Delta.Translation.Y;
+                    this.Height = yadjust;
+                }
+            }
+        }
+
+        private void _rectRight_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            if (ContentIsTextbox == true)
+            {
+                MoveAndRestrain(e);
+            }
+            else
+            {
+                //Get top left point
+                GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
+                Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
+
+                // Set this variable to represent the right edge of myCustomWindow
+                double right = TopLeftPoint.X + this.ActualWidth;
+
+                // Combine the right edge with the movement value
+                double rightAdjust = right + e.Delta.Translation.X;
+
+                // Set this variable to use for restricting the minimum size
+                double xadjust = this.ActualWidth + e.Delta.Translation.X;
+
+                // Allow adjustment within restrictions
+                if ((rightAdjust <= ((Panel)this.Parent).ActualWidth) && (xadjust >= minWidth))
+                {
+                    this.Width = xadjust;
+                }
+            }
+        }
+
+        private void MoveAndRestrain(ManipulationDeltaRoutedEventArgs e)
         {
             // Get the top left point
             GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
@@ -339,221 +653,7 @@ namespace CustomPaintObjectControl.Controls
             }
         }
 
-        private void _rectBottomRight_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            // Get top left point
-            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
-            Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
-
-            // Set these to represent the edges
-            double right = TopLeftPoint.X + this.ActualWidth;
-            double bottom = TopLeftPoint.Y + this.ActualHeight;
-
-            // Combine the adjustable edges with the movement value.
-            double rightAdjust = right + e.Delta.Translation.X;
-            double bottomAdjust = bottom + e.Delta.Translation.Y;
-
-            // Set these to use for restricting the minimum size
-            double yadjust = this.ActualHeight + e.Delta.Translation.Y;
-            double xadjust = this.ActualWidth + e.Delta.Translation.X;
-
-            // Allow adjustment within restrictions
-            if ((rightAdjust <= ((Panel)this.Parent).ActualWidth) && (xadjust >= 100))
-            {
-                this.Width = xadjust;
-            }
-
-            if ((bottomAdjust <= ((Panel)this.Parent).ActualHeight) && (yadjust >= 100))
-            {
-                this.Height = yadjust;
-            }
-        }
-
-        private void _rectBottom_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            //Get top left point
-            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
-            Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
-
-            // Set this to represent the bottom edge
-            double bottom = TopLeftPoint.Y + this.ActualHeight;
-
-            // Combine the bottom edge with the movement value
-            double bottomAdjust = bottom + e.Delta.Translation.Y;
-
-            // Set this to use for restricting the minimum size
-            double yadjust = this.ActualHeight + e.Delta.Translation.Y;
-
-            // Allow adjustment within restrictions
-            if ((bottomAdjust <= ((Panel)this.Parent).ActualHeight) && (yadjust >= 100))
-            {
-                this.Height = yadjust;
-            }
-        }
-
-        private void _rectBottomLeft_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            // Get top left point
-            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
-            Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
-
-            // Set these to represent the edges
-            double left = TopLeftPoint.X;
-            double bottom = TopLeftPoint.Y + this.ActualHeight;
-
-            // Combine the adjustable edges with the movement value
-            double leftAdjust = left + e.Delta.Translation.X;
-            double bottomAdjust = bottom + e.Delta.Translation.Y;
-
-            // Set these to use for restricting the minimum size
-            double yadjust = this.ActualHeight + e.Delta.Translation.Y;
-            double xadjust = this.ActualWidth - e.Delta.Translation.X;
-
-            // Allow adjustment within restrictions
-            if ((leftAdjust >= 0) && (xadjust >= 100))
-            {
-                transform_myControl.TranslateX += e.Delta.Translation.X;
-                this.Width = xadjust;
-            }
-
-            if ((bottomAdjust <= ((Panel)this.Parent).ActualHeight) && (yadjust >= 100))
-            {
-                this.Height = yadjust;
-            }
-        }
-
-        private void _rectLeft_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            //Get top left point
-            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
-            Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
-
-            // Set this to represent the left edge
-            double left = TopLeftPoint.X;
-
-            // Combine the left edge with the movement value
-            double leftAdjust = left + e.Delta.Translation.X;
-
-            // Set this variable to use for restricting the minimum size
-            double xadjust = this.ActualWidth - e.Delta.Translation.X;
-
-            // Allow adjustment within restrictions
-            if ((leftAdjust >= 0) && (xadjust >= 100))
-            {
-                transform_myControl.TranslateX += e.Delta.Translation.X;
-                this.Width = this.ActualWidth - e.Delta.Translation.X;
-            }
-        }
-
-        private void _rectTopRight_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            // Get top left point
-            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
-            Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
-
-            // Set these variables to represent the edges
-            double right = TopLeftPoint.X + this.ActualWidth;
-            double top = TopLeftPoint.Y;
-
-            // Combine the adjustable edges with the movement value
-            double rightAdjust = right + e.Delta.Translation.X;
-            double topAdjust = top + e.Delta.Translation.Y;
-
-            // Set these to use for restricting the minimum size
-            double yadjust = this.ActualHeight - e.Delta.Translation.Y;
-            double xadjust = this.ActualWidth + e.Delta.Translation.X;
-
-            // Allow adjustment within restrictions
-            if ((rightAdjust <= ((Panel)this.Parent).ActualWidth) && (xadjust >= 100))
-            {
-                this.Width = xadjust;
-            }
-
-            if ((topAdjust >= 0) && (yadjust >= 100))
-            {
-                transform_myControl.TranslateY += e.Delta.Translation.Y;
-                this.Height = yadjust;
-            }
-        }
-
-        private void _rectTop_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            //Get top left point
-            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
-            Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
-
-            // Set this to represent the top edge
-            double top = TopLeftPoint.Y;
-
-            // Combine the top edge with the movement value
-            double topAdjust = top + e.Delta.Translation.Y;
-
-            // Set this variable to use for restricting the minimum size
-            double yadjust = this.ActualHeight - e.Delta.Translation.Y;
-
-            // Allow adjustment within restrictions
-            if ((topAdjust >= 0) && (yadjust >= 100))
-            {
-                transform_myControl.TranslateY += e.Delta.Translation.Y;
-                this.Height = this.ActualHeight - e.Delta.Translation.Y;
-            }
-        }
-
-        private void _rectTopLeft_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            // Get top left point
-            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
-            Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
-
-            // Set these to represent the edges
-            double left = TopLeftPoint.X;
-            double top = TopLeftPoint.Y;
-
-            // Combine the adjustable edges with the movement value
-            double leftAdjust = left + e.Delta.Translation.X;
-            double topAdjust = top + e.Delta.Translation.Y;
-
-            // Set these to use for restricting the minimum size
-            double yadjust = this.ActualHeight - e.Delta.Translation.Y;
-            double xadjust = this.ActualWidth - e.Delta.Translation.X;
-
-            // Allow adjustment within restrictions
-            if ((leftAdjust >= 0) && (xadjust >= 100))
-            {
-                transform_myControl.TranslateX += e.Delta.Translation.X;
-                this.Width = xadjust;
-            }
-
-            if ((topAdjust >= 0) && (yadjust >= 100))
-            {
-                transform_myControl.TranslateY += e.Delta.Translation.Y;
-                this.Height = yadjust;
-            }
-        }
-
-        private void _rectRight_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            //Get top left point
-            GeneralTransform gt = this.TransformToVisual((Panel)this.Parent);
-            Point TopLeftPoint = gt.TransformPoint(new Point(0, 0));
-
-            // Set this variable to represent the right edge of myCustomWindow
-            double right = TopLeftPoint.X + this.ActualWidth;
-
-            // Combine the right edge with the movement value
-            double rightAdjust = right + e.Delta.Translation.X;
-
-            // Set this variable to use for restricting the minimum size
-            double xadjust = this.ActualWidth + e.Delta.Translation.X;
-
-            // Allow adjustment within restrictions
-            if ((rightAdjust <= ((Panel)this.Parent).ActualWidth) && (xadjust >= 100))
-            {
-                this.Width = xadjust;
-            }
-        }
-
-        #endregion
+#endregion
 
         childElement GeneralizedGetTemplateChild<childElement>(string name) where childElement : DependencyObject
         {
